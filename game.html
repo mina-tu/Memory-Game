@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +12,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden; /* 防止滾動 */
         }
 
         .main {
@@ -29,13 +29,14 @@
             display: flex;
             background: #fff;
             text-align: center;
+            position: relative;
         }
 
         .left-border2 {
             background: url(./images/left-border2-07.png) no-repeat center center;
-            background-size: cover;
-            height: 98%;
-            width: 98%;
+            background-size: contain;
+            height: 100%;
+            width: 100%;
             margin: auto;
             display: flex;
             flex-direction: column;
@@ -43,8 +44,8 @@
         }
 
         .info {
-            width: 76%;
-            height: 80%;
+            width: 70%;
+            height: 100%;
             margin-top: 13%;
             text-align: center;
             display: flex;
@@ -94,14 +95,13 @@
         }
 
         .game {
-            width: 92%;
-            height: 88%;
+            width: 99%;
+            height: 98%;
             margin: auto;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            
         }
 
         .card {
@@ -149,19 +149,42 @@
             cursor: pointer;
             margin-bottom: 7%;
         }
+        
         .replay img:hover {
-          filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.7))
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.7))
         }
-        .timetext{
-          font-family: '微軟正黑體';
-          color: rgb(126, 142, 174);
-          font-size: 17px;
-          margin-top: 6%;
+        
+        .timetext {
+            font-family: '微軟正黑體';
+            color: rgb(126, 142, 174);
+            font-size: 17px;
+            margin-top: 6%;
+        }
+        
+        #description-image {
+            width: 100%;
+            height: 100%;
+        }
+        .swal2-popup {
+            background-image: url(./images/alert.png) !important; 
+            background-size: cover !important; 
+            background-position: center !important; 
+            background-repeat: no-repeat !important; 
+        }
+        .swal2-confirm {
+            background-color: #d29f39 !important;
+            color: white !important;
+        }
+        .swal2-title {
+            color:rgb(126, 142, 174)!important; 
+        }
+        .swal2-popup .swal2-styled:focus {
+            box-shadow: none !important;
         }
     </style>
 </head>
 
-<body>
+<body style="height: 100vh !important;">
     <div class="main">
         <div class="left">
             <div class="left-border2">
@@ -184,8 +207,8 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'
         integrity='sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=='
         crossorigin='anonymous'></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // 卡片介紹圖片路徑
         const descriptions = {
             '1': './images/info/info-01.png',
             '2': './images/info/info-02.png',
@@ -202,16 +225,25 @@
         };
 
         let timer;
-        let timeLeft = 90; // 倒數90秒
+        let timeLeft = 2;
 
         function startTimer() {
-            timeLeft = 90; // 重置時間
+            timeLeft = 2;
             clearInterval(timer);
             timer = setInterval(() => {
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    alert('時間到！');
-                    initializeGame(); // 時間到重新開始遊戲
+                    Swal.fire({
+                        title: "時間到!",
+                        text: "請重新開始遊戲",
+                        imageAlt: "Custom image",
+                        customClass: {
+                confirmButton: 'swal2-confirm',
+                
+            }
+                    }).then(() => {
+                        initializeGame(); // 確保初始化遊戲在彈出視窗關閉後執行
+                    });
                 } else {
                     $('#timer').text(timeLeft);
                     timeLeft--;
@@ -219,11 +251,8 @@
             }, 1000);
         }
 
- 
-     
-        // 產生卡片
         function createCards() {
-            $('.game').empty(); // 清空遊戲區域
+            $('.game').empty();
             for (let i = 0; i < 24; i++) {
                 $('.game').append(`
                     <div class="card card-close">
@@ -234,7 +263,6 @@
             }
         }
 
-        // 初始化卡片正面的圖片和數字
         function initializeCards() {
             $('.card').each(function (index) {
                 const number = index % 12 + 1;
@@ -285,11 +313,22 @@
                     }
                     setTimeout(function () {
                         $('.card:not(.card-close)').addClass('card-close');
-                        if ($('.card-ok').length === $('.card').length) {
-                            clearInterval(timer);
-                            alert('過關');
-                        }
-                    }, 1000);
+    if ($('.card-ok').length === $('.card').length) {
+        clearInterval(timer);
+        Swal.fire({
+            title: "過關!",
+            text: "恭喜通關!",
+            imageAlt: "Custom image",
+            customClass: {
+                confirmButton: 'swal2-confirm',
+                
+            }
+        }).then(function() {
+            window.location.href = './index.html';
+        });
+    }
+}, 1000);
+
                 }
             });
         }
@@ -301,6 +340,7 @@
         $('#restart-button').click(function () {
             initializeGame();
         });
+
     </script>
 </body>
 

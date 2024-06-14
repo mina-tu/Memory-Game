@@ -20,6 +20,23 @@
                top: 0;
                left: 0;
           }
+          #birds {
+            height: 15%;
+            width: 55%;
+            position: absolute;
+            top: 210px;
+            left: 350px;
+            animation: moveUpDown 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes moveUpDown {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(50px);
+            }
+        }
 
 
           #play img {
@@ -39,6 +56,7 @@
 <body>
      <div class="content">
           <img src="./images/main.png" alt="">
+          <img id="birds" src="./images/birds.png" >
           <div id="play"><a href="./game.html"><img src="./images/play.png"></a></div>
      </div>
 </body>
